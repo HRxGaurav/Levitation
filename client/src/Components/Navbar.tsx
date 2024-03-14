@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLoggedIn } from '../actions/authActions';
@@ -6,16 +6,18 @@ import checkLoggedin from '../APIs/checkLoggedin';
 import levitation from '../assets/Icons/levitation.svg';
 import { RootState } from '../types';
 import Cookies from 'js-cookie';
+import Loader from './Models/Loader';
 
 const Navbar: React.FC = () => {
     const dispatch = useDispatch();
     const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const checkLoggedIn = async () => {
             const status = await checkLoggedin();
             dispatch(setLoggedIn(status === 200 ? true : false));
-            
+            setLoading(false); 
         };
 
         checkLoggedIn();
@@ -28,16 +30,20 @@ const Navbar: React.FC = () => {
         dispatch(setLoggedIn(false));
     };
 
+    
+    if (loading) {
+        return <Loader />;
+    }
 
     return (
         <>
             <nav className="flex items-center justify-between bg-teal-500 px-20 py-3">
                 <div className="flex items-center flex-shrink-0 text-white mr-6">
-                <Link to="/" className="homepage-link cursor-pointer">
-                     <img src={levitation} alt='leviation' className="homepage-image" />
+                    <Link to="/" className="homepage-link cursor-pointer">
+                        <img src={levitation} alt='leviation' className="homepage-image" />
                     </Link>
                 </div>
-                
+
                 <div className="flex">
                     <div className="text-sm lg:flex-grow"></div>
                     <div>
@@ -46,9 +52,9 @@ const Navbar: React.FC = () => {
                     <div>
                         {!isLoggedIn && <Link to="/register" className="inline-block text-sm px-4 py-2 border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Register</Link>}
                     </div>
-                    
+
                     <div>
-                        {isLoggedIn && <h1  className="inline-block  px-4 py-2 font-medium  text-white border-white  mt-4 lg:mt-0">{`Hi! ${Cookies.get( 'username')}`}</h1>}
+                        {isLoggedIn && <h1 className="inline-block  px-4 py-2 font-medium  text-white border-white  mt-4 lg:mt-0">{`Hi! ${Cookies.get('username')}`}</h1>}
                     </div>
                     <div>
                         {isLoggedIn && <Link to="/add_product" className="inline-block text-sm mr-4 px-4 py-2 border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Add Product</Link>}
