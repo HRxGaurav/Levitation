@@ -1,8 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import logo from '../assets/Icons/levitationPdf.png';
 import { Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import getProductByIdAPI from '../APIs/getProductByIdAPI';
+
+interface Item {
+  id: string;
+  name: string;
+  quantity: number;
+  rate: number;
+}
 
 interface MyDocumentProps {
   productData: any; 
@@ -165,101 +172,71 @@ const styles = StyleSheet.create({
   }
 });
 
-const calculateTotal = (items:any) => {
-  const total = items.reduce((accumulator:number, currentItem:object) => {
+const calculateTotal = (items: Item[]): number => {
+  return items.reduce((accumulator, currentItem) => {
     const itemTotal = currentItem.quantity * currentItem.rate;
-   
     return accumulator + itemTotal;
   }, 0); 
-
-  return total;
 };
-
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed
   const year = date.getFullYear().toString();
-
   return `${day}/${month}/${year}`;
 }
 
-
-const MyDocument:React.FC<MyDocumentProps> = ({productData }) => (
-
+const MyDocument: React.FC<MyDocumentProps> = ({ productData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.section}>
         <Text style={styles.heading}>INVOICE GENERATOR</Text>
         <Image src={logo} style={styles.logo} />
-
-
         <View style={styles.ProductTagDiv}>
           <Text style={styles.ProductTagProduct}>Product</Text>
           <Text style={styles.ProductTag}>Qty</Text>
           <Text style={styles.ProductTag}>Rate</Text>
           <Text style={styles.ProductTag}>Total</Text>
         </View>
-
         <View style={styles.line} />
-
-        
-          {productData.items.map((item:any) => {
-            return (
-              <>
-                <View style={styles.ProductDataDiv} key={item.id}>
-                  
-                  <Text style={styles.ProductTagDataFirst}>{item.name}</Text>
-                  <Text style={styles.ProductTagDataQty}>{item.quantity}</Text>
-                  <Text style={styles.ProductTagDataRate}>{item.rate}</Text>
-                  <Text style={styles.ProductTagDataPrice}>{item.quantity*item.rate}</Text>
-                </View>
-              </>
-            )
-          })}
-
-        
-
+        {productData.items.map((item: Item) => (
+          <View style={styles.ProductDataDiv} key={item.id}>
+            <Text style={styles.ProductTagDataFirst}>{item.name}</Text>
+            <Text style={styles.ProductTagDataQty}>{item.quantity}</Text>
+            <Text style={styles.ProductTagDataRate}>{item.rate}</Text>
+            <Text style={styles.ProductTagDataPrice}>{item.quantity * item.rate}</Text>
+          </View>
+        ))}
         <View style={styles.line} />
-        
-        
         <View style={styles.GrossDiv}>
           <View style={styles.GrossCont}>
             <Text style={styles.GrossTotalTag}>Total</Text>
             <Text style={styles.GrossTotal}>INR {calculateTotal(productData.items)}</Text>
           </View>
-
           <View style={styles.GrossCont}>
             <Text style={styles.GrossGSTTag}>GST</Text>
             <Text style={styles.GrossGST}>18%</Text>
           </View>
-
           <View style={styles.line2} />
           <View style={styles.GrossCont}>
             <Text style={styles.GrossGrandTag}>Grand Total</Text>
             <Text style={styles.GrossGrand}>Rs {calculateTotal(productData.items) * 1.18}</Text>
           </View>
           <View style={styles.line2} />
-
         </View>
-
         <Text style={styles.validTill}>Valid Until: {formatDate(productData.validUntil)}</Text>
-
         <View style={styles.bottom} >
           <Text style={styles.tncHeading}>Terms and Conditions</Text>
-          <Text style={styles.tncText}>we are happy to supply any furthur infromation you may need and trust that you call on us to fill your order.
-            which will receive our prompt and careful attention</Text>
+          <Text style={styles.tncText}>we are happy to supply any further information you may need and trust that you call on us to fill your order, which will receive our prompt and careful attention</Text>
         </View>
       </View>
     </Page>
   </Document>
 );
 
-
-const PDFGenerator = () => {
-  const { id } = useParams<{ id: string }>(); 
-  
+const PDFGenerator: React.FC = () => {
+  const { id } = useParams<{ id: any }>() ?? { id: String };
   const [productData, setProductData] = useState<any>(null);
 
   useEffect(() => {
@@ -282,7 +259,7 @@ const PDFGenerator = () => {
 
   return (
     <PDFViewer style={{ width: '100%', height: '100vh' }}>
-     { productData && <MyDocument productData={productData} />}
+      {productData && <MyDocument productData={productData} />}
     </PDFViewer>
   );
 };

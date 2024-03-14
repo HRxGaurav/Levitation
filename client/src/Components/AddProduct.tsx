@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate} from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom'; 
 import addProductAPI from '../APIs/addProductAPI'; 
 import toast from 'react-hot-toast';
 
 interface Product {
+  [key: string]: string | number | '';
   name: string;
   quantity: number | '';
   rate: number | '';
 }
 
-
-
-const AddProductPage = ()=> {
+const AddProductPage: React.FC = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([{ name: '', quantity: '', rate: '' }]);
   const [error, setError] = useState(false);
   
-
   const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     const newProducts = [...products];
@@ -31,7 +29,7 @@ const AddProductPage = ()=> {
   };
 
   const addProductRow = () => {
-    const newProduct = { name: '', quantity: '', rate: '' };
+    const newProduct: Product = { name: '', quantity: '', rate: '', total: '' };
     setProducts([...products, newProduct]);
     setError(false);
   };
@@ -68,14 +66,11 @@ const AddProductPage = ()=> {
         if (response.status === 200) {
           toast.success("Products added successfully");
           navigate(`/invoice/${data.product._id}`);
-          
-          
         } else {
           toast.error("Failed to add products");
         }
       } catch (error) {
         console.error('Error adding products:', error);
-        
       }
     }
   };
@@ -100,7 +95,7 @@ const AddProductPage = ()=> {
               value={product.rate}
               onChange={(e) => handleInputChange(index, e)}
               placeholder="Rate"
-              className="border rounded p-2  mt-2 ml-2"
+              className="border rounded p-2 mt-2 ml-2"
             />
             <input
               type="number"
@@ -108,7 +103,7 @@ const AddProductPage = ()=> {
               value={product.quantity}
               onChange={(e) => handleInputChange(index, e)}
               placeholder="Quantity"
-              className="border rounded p-2  mt-2 ml-2"
+              className="border rounded p-2 mt-2 ml-2"
             />
             <span className="mt-2 ml-2">Total: {product.total}</span>
             {index !== 0 && (
@@ -145,6 +140,5 @@ const AddProductPage = ()=> {
     </div>
   );
 };
-
 
 export default AddProductPage;

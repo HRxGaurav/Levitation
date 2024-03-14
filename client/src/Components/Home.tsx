@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux'; 
 import { RootState } from '../types';
 import getProductsAPI from '../APIs/getProductsAPI';
 
 interface Order {
+  [x: string]: ReactNode;
   id: string;
   // Add other properties as needed
 }
