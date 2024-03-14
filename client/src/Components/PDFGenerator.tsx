@@ -187,6 +187,8 @@ function formatDate(dateString: string): string {
   return `${day}/${month}/${year}`;
 }
 
+
+
 const MyDocument: React.FC<MyDocumentProps> = ({ productData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
@@ -212,7 +214,7 @@ const MyDocument: React.FC<MyDocumentProps> = ({ productData }) => (
         <View style={styles.GrossDiv}>
           <View style={styles.GrossCont}>
             <Text style={styles.GrossTotalTag}>Total</Text>
-            <Text style={styles.GrossTotal}>INR {calculateTotal(productData.items)}</Text>
+            <Text style={styles.GrossTotal}>INR {calculateTotal(productData.items).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</Text>
           </View>
           <View style={styles.GrossCont}>
             <Text style={styles.GrossGSTTag}>GST</Text>
