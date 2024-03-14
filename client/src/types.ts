@@ -5,3 +5,8 @@ export interface RootState {
 export interface AuthState {
   isLoggedIn: boolean;
 }
+
+export interface AuthAction {
+  type: string;
+  payload: boolean;
+}

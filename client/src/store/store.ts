@@ -1,12 +1,16 @@
-
-import { createStore, combineReducers } from 'redux';
+// store.ts
+import { combineReducers, createStore } from 'redux';
 import authReducer from '../reducers/authReducer';
-import { RootState } from '../types';
+import { AuthState } from '../types';
 
-const rootReducer = combineReducers<RootState>({
+const rootReducer = combineReducers({
   auth: authReducer
 });
 
 const store = createStore(rootReducer);
 
 export default store;
+
+export interface RootState {
+  auth: AuthState;
+}
